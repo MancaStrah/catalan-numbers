@@ -1,5 +1,78 @@
 import Mathlib
 
+
+-- 1: Formalization tasks
+
+-- 1.1: Formalize the crecursive definition of the catalan numbers.
+def catalan_number : Nat → Nat
+| 0 => 1
+| succ n => ∑ i : Fin (succ n), (catalan_number i) * (catalan_number (n - i))
+
+
+#eval catalan 0
+#eval catalan 1
+#eval catalan 2
+#eval catalan 3
+
+
+
+
+-- 1.2: Formalize the concept of plane trees
+
+
+
+
+
+
+-- 1.3: Formalize the concept of full binary trees.
+
+inductive full_binary_tree : Type
+| root
+| join : (T1 T2 : full_binary_tree) → full_binary_tree
+
+def full_binary_tree.height : full_binary_tree → ℕ
+| .root => 0
+| .join T1 T2 => max (T1.height) (T2.height) + 1
+
+
+
+
+
+
+-- 1.4: Construct the type of full binary trees with n nodes, not counting the
+leaves
+
+
+
+-- 1.5: Define the type of ballot sequences of length n
+
+
+
+
+
+-- LARGER TASKS
+
+-- 2.1: Construct a bijection ...
+
+
+-- 2.2: Construct a bijection ....
+
+
+
+
+
+
+
+
+
+
+
+
+-- STARE STVARI IZ VAJ
+
+
+
+
 /-- Binary trees -/
 inductive binary_tree : Type
 | root
@@ -18,15 +91,6 @@ def binary_tree.number_of_leaves : binary_tree → ℕ
 | .succ T => T.number_of_leaves
 | .join T1 T2 => T1.number_of_leaves + T2.number_of_leaves
 
-
-/-- Full binary trees -/
-inductive full_binary_tree : Type
-| root
-| join : (T1 T2 : full_binary_tree) → full_binary_tree
-
-def full_binary_tree.height : full_binary_tree → ℕ
-| .root => 0
-| .join T1 T2 => max (T1.height) (T2.height) + 1
 
 
 /-- Converting a full binary tree into a binary tree-/
@@ -84,5 +148,3 @@ inductive plane_tree: Type
 
 
 -- Vaje 3: 19. 4. 2024
-
-
