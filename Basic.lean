@@ -3,7 +3,7 @@ import Mathlib
 
 -- 1: Formalization tasks
 
--- 1.1: Formalize the crecursive definition of the catalan numbers.
+-- 1.1: Formalize the crecursive definition of the catalan numbers.---------------------------------------------
 def catalan_number : Nat → Nat
 | 0 => 1
 | succ n => ∑ i : Fin (succ n), (catalan_number i) * (catalan_number (n - i))
@@ -13,25 +13,31 @@ def catalan_number : Nat → Nat
 #eval catalan 1
 #eval catalan 2
 #eval catalan 3
+#eval catalan 7
 
 
 
 
--- 1.2: Formalize the concept of plane trees
+-- 1.2: Formalize the concept of plane trees-----------------------------------------------------------------
+inductive PlaneTree : Type
+| branches : List PlaneTree  → PlaneTree
 
 
 
 
 
 
--- 1.3: Formalize the concept of full binary trees.
+
+
+-- 1.3: Formalize the concept of full binary trees.--------------------------------------------------------------
 
 inductive full_binary_tree : Type
-| root
+| leaf : full_binary_tree
 | join : (T1 T2 : full_binary_tree) → full_binary_tree
 
+--neke zadeve z vaj, napisan da ne moti ker so spodaj neke zadeve z vaj
 def full_binary_tree.height : full_binary_tree → ℕ
-| .root => 0
+| .leaf => 0
 | .join T1 T2 => max (T1.height) (T2.height) + 1
 
 
@@ -39,12 +45,26 @@ def full_binary_tree.height : full_binary_tree → ℕ
 
 
 
--- 1.4: Construct the type of full binary trees with n nodes, not counting the
-leaves
+-- 1.4: Construct the type of full binary trees with n nodes, not counting the-----------------------------------
+--leaves
+inductive FullBinaryTreeWithNNodes : ℕ → Type
+| empty : FullBinaryTreeWithNNodes 0 -- Represents an empty tree with 0 nodes
+| node : Π {m n}, FullBinaryTreeWithNNodes m → FullBinaryTreeWithNNodes n → FullBinaryTreeWithNNodes (m + n + 1)
+-- Constructor `node` represents a node in a full binary tree with m + n + 1 nodes.
+-- It takes two subtrees of sizes m and n, respectively, and creates a new node.
 
 
 
--- 1.5: Define the type of ballot sequences of length n
+-- 1.5: Define the type of ballot sequences of length n-----------------------------------------------------
+
+-- Define the ballot type
+inductive ballot : ℕ → ℕ → Type
+| nil : ballot 0 0
+| next_1 : Π {sum n : ℕ}, ballot sum n → ballot (sum + 1) (n + 1)
+| next_minus1 : Π {sum n : ℕ}, ballot sum n → ballot sum (n + 1)
+
+
+
 
 
 
@@ -95,12 +115,12 @@ def binary_tree.number_of_leaves : binary_tree → ℕ
 
 /-- Converting a full binary tree into a binary tree-/
 def binary_tree_of_full_binary_tree : full_binary_tree → binary_tree
-| .root => .root
+| .leaf => .root
 | .join T1 T2 => .join (binary_tree_of_full_binary_tree T1) (binary_tree_of_full_binary_tree T2)
 
 /-- Converting a binary tree into a full binary tree, by forgetting its unary branchings-/
 def full_binary_tree_of_binary_tree : binary_tree → full_binary_tree
-| .root => .root
+| .root => .leaf
 | .succ T => full_binary_tree_of_binary_tree T
 | .join T1 T2 => .join (full_binary_tree_of_binary_tree T1) (full_binary_tree_of_binary_tree T2)
 
@@ -115,13 +135,13 @@ rw [T1_H, T2_H]
 
 
 def full_binary_tree.number_of_leaves : full_binary_tree → ℕ
-| .root => 1
+| .leaf => 1
 | .join T1 T2 => T1.number_of_leaves + T2.number_of_leaves
 
 
-theorem eq_number_of_leaves_binary_tree_of_full_binary_tree : (T : full_binary_tree) → T.number_of_leaves =
-(binary_tree_of_full_binary_tree T).number_of_leaves := by
-sorry
+-- theorem eq_number_of_leaves_binary_tree_of_full_binary_tree : (T : full_binary_tree) → T.number_of_leaves =
+-- (binary_tree_of_full_binary_tree T).number_of_leaves := by
+-- sorry
 
 
 /-- The type of binary trees with n nodes -/
