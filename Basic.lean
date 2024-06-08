@@ -1,4 +1,11 @@
 import Mathlib
+-- Catalan.lean
+import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Nat.Choose.Basic
+import Mathlib.Tactic.Basic
+open BigOperators
+open Nat
 
 
 -- 1: Formalization tasks
@@ -7,6 +14,12 @@ import Mathlib
 def catalan_number : Nat → Nat
 | 0 => 1
 | succ n => ∑ i : Fin (succ n), (catalan_number i) * (catalan_number (n - i))
+
+--what is Fin:
+-- inductive Fin : Nat → Type
+-- | zero : ∀ {n}, Fin (Nat.succ n)
+-- | succ : ∀ {n}, Fin n → Fin (Nat.succ n)
+
 
 
 #eval catalan 0
@@ -22,6 +35,13 @@ def catalan_number : Nat → Nat
 inductive PlaneTree : Type
 | branches : List PlaneTree  → PlaneTree
 
+--In Lean, the absence of constructors implicitly represents the possibility of an empty tree. In this case,
+--if no branches are provided, it implies that the tree is empty
+
+-- But if we wanted better readability we could also add option "empty"
+-- inductive PlaneTree : Type
+-- | empty : PlaneTree
+-- | branches : List PlaneTree → PlaneTree
 
 
 
@@ -34,13 +54,18 @@ inductive PlaneTree : Type
 inductive full_binary_tree : Type
 | leaf : full_binary_tree
 | join : (T1 T2 : full_binary_tree) → full_binary_tree
+deriving Repr
+
+
+--Just defining some simple tree to test if it works
+def tree13 := full_binary_tree.join full_binary_tree.leaf full_binary_tree.leaf
+
+#eval tree13
 
 --neke zadeve z vaj, napisan da ne moti ker so spodaj neke zadeve z vaj
 def full_binary_tree.height : full_binary_tree → ℕ
 | .leaf => 0
 | .join T1 T2 => max (T1.height) (T2.height) + 1
-
-
 
 
 
@@ -68,17 +93,26 @@ inductive ballot : ℕ → ℕ → Type
 
 
 
-
-
 -- LARGER TASKS
 
 -- 2.1: Construct a bijection ...
+
 
 
 -- 2.2: Construct a bijection ....
 
 
 
+
+-- 2.7
+-- The binomial coefficient (choose function)
+def binomial (n k : ℕ) : ℕ := Nat.choose n k
+
+--Proving the catalan formula for base case where n=0
+theorem catalan_number_formula_base : catalan_number 0 = (binomial (2 * 0) 0) / (0 + 1) := by
+  rw [catalan_number]
+  have h : binomial 0 0 = 1 := Nat.choose_zero_right 0
+  rw [h, Nat.zero_add, Nat.div_one]
 
 
 
