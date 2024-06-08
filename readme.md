@@ -18,4 +18,4 @@ We decided to formalize the following tasks:
 4. Construction of a bijection. 
 
 
-Formalization can be found in ´Basic.lean´ file. 
+Formalization can be found in `Basic.lean` file. 
