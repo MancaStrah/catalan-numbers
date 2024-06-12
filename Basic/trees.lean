@@ -27,17 +27,21 @@ inductive PlaneTree : Type
 
 -- 1.3: Formalize the concept of full binary trees.--------------------------------------------------------------
 
-inductive full_binary_tree : Type
-| leaf : full_binary_tree
-| join : (T1 T2 : full_binary_tree) → full_binary_tree
+inductive FullBinaryTree : Type
+| leaf : FullBinaryTree
+| node : (T1 T2 : FullBinaryTree) → FullBinaryTree
 deriving Repr
+
+-- inductive FullBinaryTree : Type
+-- | leaf : FullBinaryTree
+-- | node : FullBinaryTree → FullBinaryTree → FullBinaryTree
 
 
 -- TODO delete?
 --neke zadeve z vaj, napisan da ne moti ker so spodaj neke zadeve z vaj
-def full_binary_tree.height : full_binary_tree → ℕ
-| .leaf => 0
-| .join T1 T2 => max (T1.height) (T2.height) + 1
+-- def full_binary_tree.height : full_binary_tree → ℕ
+-- | .leaf => 0
+-- | .join T1 T2 => max (T1.height) (T2.height) + 1
 
 
 
