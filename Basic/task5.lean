@@ -1,6 +1,9 @@
 import Mathlib.Logic.Equiv.Defs
 import «Basic».trees
 
+--TASK 5:Construct the rotating isomorphism, which is the isomorphism between
+--plane trees and full binary trees.
+
 
 -- Define a leaf for PlaneTree as an empty list of branches
 @[inline]
