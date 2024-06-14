@@ -1,4 +1,5 @@
 -- imports
+-- There is a warning "code generator does not support recursor 'Nat.rec' yet, consider using 'match ... with' and/or structural recursion", which we were unable to solve
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Logic.Equiv.Functor
 import Mathlib.Logic.Equiv.Defs
@@ -90,6 +91,7 @@ def sumIsSum {n : Nat} {k : Nat → Nat} :
       #check Equiv.trans
       apply Equiv.trans
       apply sigmaNatSuccUltra
+      use (fun n => Fin n)
       apply sumCong
       exact ih
 
