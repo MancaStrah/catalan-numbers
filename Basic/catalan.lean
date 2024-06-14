@@ -11,6 +11,6 @@ def catalan_number : Nat → Nat
 | succ n => ∑ i : Fin (succ n), (catalan_number i) * (catalan_number (n - i))
 
 --what is Fin:
--- inductive Fin : Nat → Type
--- | zero : ∀ {n}, Fin (Nat.succ n)
--- | succ : ∀ {n}, Fin n → Fin (Nat.succ n)
+inductive Fin1 : Nat → Type
+| zero : ∀ {n}, Fin1 (Nat.succ n)
+| succ : ∀ {n}, Fin1 n → Fin1 (Nat.succ n)

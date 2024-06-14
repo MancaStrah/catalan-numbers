@@ -42,13 +42,39 @@ def k_example : Fin 3 → Nat
 
 #reduce sumOfFin 3 k_example  --
 
-
+-- general example
 def kId (n : Nat) (x : Fin n) : Nat := x
+#reduce sumOfFin 10 (kId 10)
+#reduce sumOfFin 0 (kId 0)
 
-#check sumOfFin 0 (kId 0)
-#check sumOfFin 2 (kId 2)
 
-def finSumnFinEquiv  {n : Nat} {k : Fin n → Nat} :
+--  1. EQUALITY OF THE OUTER SUMS
+-- First step is to show, that ∑ i : Fin 4, Id  =  Fin 1 ⊕ Fin 2 ⊕ Fin 3
+def sumIsSum {n : Nat} {k : Fin n → Nat} :
+   (  Σ i : Fin n , Fin ( k i) ) ≃ sumOfFin n k := by
+    induction n with
+    | zero =>
+            simp
+            reduce
+            apply Equiv.equivOfIsEmpty
+
+    | succ n ih => sorry
+
+def finSumnFinEquiv{n : Nat} {k : Fin n → Nat} :
+   sumOfFin n k  ≃ Fin (∑ i : Fin n, k i) := by
+   sorry
+
+--EQUALITY:
+
+def finSigmanFinEquiv  {n : Nat} {k : Fin n → Nat} :
+ (  Σ i : Fin n , Fin ( k i) ) ≃  Fin (∑ i : Fin n, k i) := by
+    apply Equiv.trans
+    apply sumIsSum
+    exact finSumnFinEquiv
+
+
+
+def finSumnFinEquiv_cpy  {n : Nat} {k : Fin n → Nat} :
  (  Σ i : Fin n , Fin ( k i) ) ≃  Fin (∑ i : Fin n, k i) := by
   -- induction on lenght of k = k0, ..., k(n-1)
   induction n with

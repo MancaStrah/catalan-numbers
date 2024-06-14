@@ -19,6 +19,9 @@ open Nat
 #check add_comm
 #check sub_lt_sub_right
 #check add_lt_add_right
+#check Fin.sum_univ_castSucc
+#check add_lt_add_iff_right
+#check add_left_neg
 
 -- lema for simplification
 lemma x_minus_plus_strict {x a : ℕ} (h : a < x) : x = (x - a) + a := by
@@ -31,6 +34,18 @@ rw[Nat.sub_add_cancel]
 exact h
 
 
+example{a b c : Nat} (h1 : a < b) : a + c < b + c :=
+by
+apply add_lt_add_right
+exact h1
+
+example {a b c : Nat} (h1 : a + c < b + c) : a  < b :=
+by
+apply Nat.add_lt_add_iff_right.mp h1
+
+lemma lemma1{a z c : Nat} (h1 : a  < z) : (a + c ) - c < z := by
+simp
+exact h1
 
 
 
@@ -56,17 +71,21 @@ induction n with
     use Fin.mk nn (Nat.lt_succ_self nn)
     -- use x - q as m:
 
-    have xz_le_sum : xz < ( ∑ i : Fin (succ nn), k i )  :=
+    have xz_le_sum : xz.val < ( ∑ i : Fin (succ nn), k i )  :=
         by
         simp
 
-    have x_minus_q_le_knn : xz - q < k (Fin.mk nn (Nat.lt_succ_self nn)) :=--(Fin.castLE (Nat.lt_succ_self nn) nn) :=
+    have xz_q_q_le_sum_q : (xz.val -q) +q< ( ∑ i : Fin (succ nn), k i ) +q:= by
+      --rw[sub_add_cancel xz.val q]
+      sorry
+
+    -- proof for: xz - q < k(nn)
+    have x_minus_q_le_knn : xz.val - q < k (Fin.mk nn (Nat.lt_succ_self nn)) :=--(Fin.castLE (Nat.lt_succ_self nn) nn) :=
       by
       simp
       ring_nf
-      --rw[← add_lt_add_right q]
-      let z := sub_lt_sub_right xz_le_sum q
-
+      sorry
+      --apply add_lt_add_iff_right.mp  xz_q_q_le_sum_q
 
 
 
@@ -88,6 +107,8 @@ induction n with
     sorry
 
 
+def fin_to_product : Fin (∑ i : Fin n, k i) → Σ i : Fin n , Fin (k i) :=
+sorry
 
 
 
