@@ -81,33 +81,38 @@ def sigmaNatSuccUltra {n : Nat} {k : ℕ → ℕ} :
 
   invFun := fun x =>
     match x with
-    | Sum.inl ⟨i, fi⟩ => ⟨i.cast_succ, fi⟩
+    | Sum.inl ⟨i, fi⟩ => ⟨i, (by
+      use fi
+      --exact Fin.is_lt fi
+      simp
+
+
+    )⟩
     | Sum.inr fn      => ⟨Fin.last n, fn⟩,
 
   left_inv := fun ⟨i, fi⟩ =>
     match i with
     | ⟨i, h⟩ =>
       if h : i < n then
-        by simp [h]
-      else
-        by simp [h, Nat.lt_irrefl],
+        by
+          simp
+          simp [h]
+          --intro hh
+          sorry
+
+      else (
+        by
+          simp [h, Nat.lt_irrefl]
+          sorry
+          )
+          ,
 
   right_inv := fun x =>
     match x with
-    | Sum.inl ⟨i, fi⟩ => by simp
-    | Sum.inr fn      => by simp
+    | Sum.inl ⟨i, fi⟩ => by sorry
+    | Sum.inr fn      => by sorry
 }
 
-
--- def sigmaNatSuccUltra {n : Nat} {k : ℕ → ℕ }:
--- (  Σ i : Fin (Nat.succ n) , Fin ( k i) )  ≃  (  Σ i : Fin n , Fin ( k i) ) ⊕ Fin (k n) :=
--- ⟨fun x =>
---    --@Sigma.casesOn ℕ f (fun _ => Sum (f 0) (Σn, f (n + 1))) x fun n =>
---     @Sigma.casesOn ℕ (fun m => Fin m)  (fun _ =>((  Σ i : Fin n , Fin ( k i) ) ⊕ Fin (k n)) ) x fun n =>
---       @Nat.casesOn (fun i => (fun m => Fin (k m)) i → Sum ((fun m => Fin (k m)) 0) (Σn : ℕ, (fun m => Fin (k m)) (n + 1))) n (fun x : (fun m => Fin (k m)) 0 => Sum.inl x)
---         fun (n : ℕ) (x : (fun m => Fin (k m)) n.succ) => Sum.inr ⟨n, x⟩,
---     Sum.elim (Sigma.mk 0) (Sigma.map Nat.succ fun _ => id), by rintro ⟨n | n, x⟩ <;> rfl, by
---     rintro (x | ⟨n, x⟩) <;> rfl⟩
 
 
 
