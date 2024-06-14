@@ -58,43 +58,18 @@ lemma sumCong (h: A ≃ B) : A ⊕ C ≃ B ⊕ C := by
 -- STEP 1 - relation between Σ and ⊕
 ---------------------
 
-k { val := n, isLt := _ }
---lemma lemma1 {k : ℕ → ℕ} (x : Fin k i) :
 
--- Define the forward direction function
-def forward {n : ℕ} {k : ℕ → ℕ} :
-  (Σ i : Fin (Nat.succ n), Fin (k i)) → (Σ i : Fin n, Fin (k i)) ⊕ Fin (k n) :=
-fun ⟨i, x⟩ =>
-  if h : i.val < n
-  then Sum.inl ⟨Fin.castLT i h,  by
-                        use x
-                        simp
-  ⟩
-  else Sum.inr (by
-  use  x
-  sorry
+--def sigmaNatSucc1 (f : ℕ → Type u) : (Σ n, f n) ≃ Sum (f 0) (Σ n, f (n + 1)) :=
+def sigmaNatSuccUltra {n : Nat} {k : ℕ → ℕ } (f : ℕ → Type u) :
+(  Σ i : Fin (Nat.succ n) , Fin ( k i) )  ≃  (  Σ i : Fin n , Fin ( k i) ) ⊕ Fin (k n) :=
+  ⟨fun x =>
+   --@Sigma.casesOn ℕ f (fun _ => Sum (f 0) (Σn, f (n + 1))) x fun n =>
+    @Sigma.casesOn ℕ (fun m => Fin m)  (fun _ =>((  Σ i : Fin n , Fin ( k i) ) ⊕ Fin (k n)) )x fun n =>
+      @Nat.casesOn (fun i => f i → Sum (f 0) (Σn : ℕ, f (n + 1))) n (fun x : f 0 => Sum.inl x)
+        fun (n : ℕ) (x : f n.succ) => Sum.inr ⟨n, x⟩,
+    Sum.elim (Sigma.mk 0) (Sigma.map Nat.succ fun _ => id), by rintro ⟨n | n, x⟩ <;> rfl, by
+    rintro (x | ⟨n, x⟩) <;> rfl⟩
 
-  )
-
-  def backward {n : ℕ} {k : ℕ → ℕ} :
- (Σ i : Fin n, Fin (k i)) ⊕ Fin (k n)→ (Σ i : Fin (Nat.succ n), Fin (k i)) :=
-fun x =>
-  match x with
-  | Sum.inl ⟨i, x⟩ => ⟨⟨i.val, Nat.lt_trans i.isLt (Nat.lt_succ_self n)⟩, x⟩
-  | Sum.inr x =>  ⟨⟨n, Nat.lt_succ_self n⟩, x⟩
-
-
-#check Equiv.sigmaNatSucc
-
--- ⊕ adds additional element to Σ:
-lemma sigmaNatSuccUltra {n : Nat} {k : ℕ → ℕ} :   (  Σ i : Fin (Nat.succ n) , Fin ( k i) )  ≃  (  Σ i : Fin n , Fin ( k i) ) ⊕ Fin (k n) :=
-  {
-    toFun := forward
-    invFun := backward
-    left_inv := by sorry
-    right_inv := by sorry
-
-  }
 
 
 -- First step is to show, that ∑ i : Fin 4, Id  =  Fin 1 ⊕ Fin 2 ⊕ Fin 3
