@@ -15,11 +15,11 @@ def ballot_sequnces_n (n : ℕ) : Set (List ℤ) :=
   {
     -- The set of lists l such that:
     l |
-      ∃ p : ℕ, ∃ q : ℕ,
-      -- There exist natural numbers p and q such that p + q = n
-      p + q = n ∧
-      -- The list l contains exactly p occurrences of 1 and q occurrences of -1
-      l.count 1 = p ∧ l.count (-1) = q ∧
+      ∃ a : ℕ, ∃ b : ℕ,
+      -- There exist natural numbers a and b such that a + b = n
+      a + b = n ∧
+      -- The list l contains exactly a occurrences of 1 and b occurrences of -1
+      l.count 1 = a ∧ l.count (-1) = b ∧
       -- Each element x in the list l must be either 1 or -1
       ∀ x ∈ l, (x = (1 : ℤ) ∨ x = -1) ∧
       -- For every prefix of length i (where i ranges from 0 to n),
