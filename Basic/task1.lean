@@ -37,10 +37,7 @@ def sumOfFin : (n : Nat) → (k : Nat → Nat) → Type
   | 0, _ => PEmpty -- same as Fin 0
   | n + 1, k =>  (sumOfFin n (fun i => k (i))) ⊕ (Fin (k n))
 
--- alternative:
-def RsumOfFin : (n : Nat) → (k : Nat → Nat) → Type
-  | 0, _ => PEmpty
-  | n + 1, k => Sum (Fin (k 0)) (sumOfFin n (fun i => k (Fin.succ i)))
+
 
 -- EXAMPLE USAGE:
 def kId (n : Nat) (x : Nat) : Nat := x
@@ -60,16 +57,48 @@ lemma sumCong (h: A ≃ B) : A ⊕ C ≃ B ⊕ C := by
 ---------------------
 
 
---def sigmaNatSucc1 (f : ℕ → Type u) : (Σ n, f n) ≃ Sum (f 0) (Σ n, f (n + 1)) :=
-def sigmaNatSuccUltra {n : Nat} {k : ℕ → ℕ } (f : ℕ → Type u) :
-(  Σ i : Fin (Nat.succ n) , Fin ( k i) )  ≃  (  Σ i : Fin n , Fin ( k i) ) ⊕ Fin (k n) :=
-  ⟨fun x =>
-   --@Sigma.casesOn ℕ f (fun _ => Sum (f 0) (Σn, f (n + 1))) x fun n =>
-    @Sigma.casesOn ℕ (fun m => Fin m)  (fun _ =>((  Σ i : Fin n , Fin ( k i) ) ⊕ Fin (k n)) )x fun n =>
-      @Nat.casesOn (fun i => f i → Sum (f 0) (Σn : ℕ, f (n + 1))) n (fun x : f 0 => Sum.inl x)
-        fun (n : ℕ) (x : f n.succ) => Sum.inr ⟨n, x⟩,
-    Sum.elim (Sigma.mk 0) (Sigma.map Nat.succ fun _ => id), by rintro ⟨n | n, x⟩ <;> rfl, by
-    rintro (x | ⟨n, x⟩) <;> rfl⟩
+def sigmaNatSuccUltra {n : Nat} {k : ℕ → ℕ} :
+  (Σ i : Fin (Nat.succ n), Fin (k i)) ≃ (Σ i : Fin n, Fin (k i)) ⊕ Fin (k n) :=
+{
+  toFun := fun ⟨i, fi⟩ =>
+    if h : i.val < n then
+      Sum.inl ⟨Fin.mk i.val h, fi⟩
+    else {
+      by
+      use Sum.inr fi
+
+      }
+      ,
+
+  invFun := fun x =>
+    match x with
+    | Sum.inl ⟨i, fi⟩ => ⟨i.cast_succ, fi⟩
+    | Sum.inr fn      => ⟨Fin.last n, fn⟩,
+
+  left_inv := fun ⟨i, fi⟩ =>
+    match i with
+    | ⟨i, h⟩ =>
+      if h : i < n then
+        by simp [h]
+      else
+        by simp [h, Nat.lt_irrefl],
+
+  right_inv := fun x =>
+    match x with
+    | Sum.inl ⟨i, fi⟩ => by simp
+    | Sum.inr fn      => by simp
+}
+
+
+-- def sigmaNatSuccUltra {n : Nat} {k : ℕ → ℕ }:
+-- (  Σ i : Fin (Nat.succ n) , Fin ( k i) )  ≃  (  Σ i : Fin n , Fin ( k i) ) ⊕ Fin (k n) :=
+-- ⟨fun x =>
+--    --@Sigma.casesOn ℕ f (fun _ => Sum (f 0) (Σn, f (n + 1))) x fun n =>
+--     @Sigma.casesOn ℕ (fun m => Fin m)  (fun _ =>((  Σ i : Fin n , Fin ( k i) ) ⊕ Fin (k n)) ) x fun n =>
+--       @Nat.casesOn (fun i => (fun m => Fin (k m)) i → Sum ((fun m => Fin (k m)) 0) (Σn : ℕ, (fun m => Fin (k m)) (n + 1))) n (fun x : (fun m => Fin (k m)) 0 => Sum.inl x)
+--         fun (n : ℕ) (x : (fun m => Fin (k m)) n.succ) => Sum.inr ⟨n, x⟩,
+--     Sum.elim (Sigma.mk 0) (Sigma.map Nat.succ fun _ => id), by rintro ⟨n | n, x⟩ <;> rfl, by
+--     rintro (x | ⟨n, x⟩) <;> rfl⟩
 
 
 
@@ -91,7 +120,6 @@ def sumIsSum {n : Nat} {k : Nat → Nat} :
       #check Equiv.trans
       apply Equiv.trans
       apply sigmaNatSuccUltra
-      use (fun n => Fin n)
       apply sumCong
       exact ih
 
