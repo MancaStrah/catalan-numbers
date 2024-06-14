@@ -48,7 +48,7 @@ def kId (n : Nat) (x : Fin n) : Nat := x
 #reduce sumOfFin 0 (kId 0)
 
 
---  1. EQUALITY OF THE OUTER SUMS
+--  1. EQUALITY OF ⨁ AND Σ
 -- First step is to show, that ∑ i : Fin 4, Id  =  Fin 1 ⊕ Fin 2 ⊕ Fin 3
 def sumIsSum {n : Nat} {k : Fin n → Nat} :
    (  Σ i : Fin n , Fin ( k i) ) ≃ sumOfFin n k := by
@@ -58,15 +58,37 @@ def sumIsSum {n : Nat} {k : Fin n → Nat} :
             reduce
             apply Equiv.equivOfIsEmpty
 
-    | succ n ih => sorry
+    | succ n ih =>
 
+    sorry
+
+
+
+lemma sumCong (h: A ≃ B) : A ⊕ C ≃ B ⊕ C := by
+  apply Equiv.sumCongr h
+  apply Equiv.refl C
+
+
+--2. EQUALITY OF ⨁Fin and Fin+
+-- Show that  Fin k1 ⊕ Fin k2 ⊕ Fin k3 = Fin(k1 + k2 + k3)
 def finSumnFinEquiv{n : Nat} {k : Fin n → Nat} :
    sumOfFin n k  ≃ Fin (∑ i : Fin n, k i) := by
-   sorry
+   induction n with
+   | zero =>
+             simp
+             reduce
+             apply Equiv.equivOfIsEmpty
+
+   | succ n ih=>
+      have reduced : sumOfFin (n + 1) k = (  (sumOfFin n (fun i => k (i))) ⊕ (Fin (k n)) ) := by
+        rfl
+      rw[reduced]
+
+      sorry
 
 --EQUALITY:
 
-def finSigmanFinEquiv  {n : Nat} {k : Fin n → Nat} :
+theorem finSigmanFinEquiv  {n : Nat} {k : Fin n → Nat} :
  (  Σ i : Fin n , Fin ( k i) ) ≃  Fin (∑ i : Fin n, k i) := by
     apply Equiv.trans
     apply sumIsSum
