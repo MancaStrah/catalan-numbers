@@ -61,14 +61,23 @@ def sigmaNatSuccUltra {n : Nat} {k : ℕ → ℕ} :
   (Σ i : Fin (Nat.succ n), Fin (k i)) ≃ (Σ i : Fin n, Fin (k i)) ⊕ Fin (k n) :=
 {
   toFun := fun ⟨i, fi⟩ =>
+
     if h : i.val < n then
       Sum.inl ⟨Fin.mk i.val h, fi⟩
-    else {
-      by
-      use Sum.inr fi
+    else  Sum.inr ( by
+      use fi
+      have ign: i.val ≥ n := by
+        use Nat.ge_of_not_lt h
+      have iln : i.val ≤ n := Nat.le_of_lt_succ (Fin.is_lt i)
+      have iisn := Nat.le_antisymm ign iln
+      have lesi : fi.val < k i := by
+        use Fin.is_lt fi
+      simp
+      simp_rw[iisn]
+      exact lesi
+      )
 
-      }
-      ,
+    ,
 
   invFun := fun x =>
     match x with
