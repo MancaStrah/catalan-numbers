@@ -22,6 +22,8 @@ open Nat
 #check Fin.sum_univ_castSucc
 #check add_lt_add_iff_right
 #check add_left_neg
+#check Fin.sum_univ_castSucc
+
 
 -- lema for simplification
 lemma x_minus_plus_strict {x a : ℕ} (h : a < x) : x = (x - a) + a := by

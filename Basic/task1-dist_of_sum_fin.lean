@@ -26,11 +26,11 @@ open Fin
 -- we need a connection between Σ and ⊕, that is
 --A type representing Fin 1 ⊕ Fin 2 ⊕ Fin 3:
 
-def sumOfFin : (n : Nat) → (k : Fin n → Nat) → Type
+def sumOfFin : (n : Nat) → (k : Nat → Nat) → Type
   | 0, _ => PEmpty -- same as Fin 0
   | n + 1, k =>  (sumOfFin n (fun i => k (i))) ⊕ (Fin (k n))
 
-def RsumOfFin : (n : Nat) → (k : Fin n → Nat) → Type
+def RsumOfFin : (n : Nat) → (k : Nat → Nat) → Type
   | 0, _ => PEmpty
   | n + 1, k => Sum (Fin (k 0)) (sumOfFin n (fun i => k (Fin.succ i)))
 
@@ -50,7 +50,7 @@ def kId (n : Nat) (x : Fin n) : Nat := x
 
 --  1. EQUALITY OF ⨁ AND Σ
 -- First step is to show, that ∑ i : Fin 4, Id  =  Fin 1 ⊕ Fin 2 ⊕ Fin 3
-def sumIsSum {n : Nat} {k : Fin n → Nat} :
+def sumIsSum {n : Nat} {k : Nat → Nat} :
    (  Σ i : Fin n , Fin ( k i) ) ≃ sumOfFin n k := by
     induction n with
     | zero =>
@@ -71,7 +71,7 @@ lemma sumCong (h: A ≃ B) : A ⊕ C ≃ B ⊕ C := by
 
 --2. EQUALITY OF ⨁Fin and Fin+
 -- Show that  Fin k1 ⊕ Fin k2 ⊕ Fin k3 = Fin(k1 + k2 + k3)
-def finSumnFinEquiv{n : Nat} {k : Fin n → Nat} :
+def finSumnFinEquiv{n : Nat} {k : Nat → Nat} :
    sumOfFin n k  ≃ Fin (∑ i : Fin n, k i) := by
    induction n with
    | zero =>
@@ -80,22 +80,36 @@ def finSumnFinEquiv{n : Nat} {k : Fin n → Nat} :
              apply Equiv.equivOfIsEmpty
 
    | succ n ih=>
-      have reduced : sumOfFin (n + 1) k = (  (sumOfFin n (fun i => k (i))) ⊕ (Fin (k n)) ) := by
+      have reduced : sumOfFin (n + 1) k = (  (sumOfFin n k) ⊕ (Fin (k n)) ) := by
         rfl
       rw[reduced]
+      apply Equiv.symm
+      -- rewrite this into the form for finSumFinEquiv
+      rw[ Fin.sum_univ_castSucc ]
 
-      sorry
+      -- use finSumFinEquiv
+      apply Equiv.trans
+      apply Equiv.symm
+      apply finSumFinEquiv
 
---EQUALITY:
+      apply Equiv.symm
+      simp
+      exact sumCong ih
 
-theorem finSigmanFinEquiv  {n : Nat} {k : Fin n → Nat} :
+
+
+
+
+--FINAL EQUALITY:
+
+theorem finSigmanFinEquiv  {n : Nat} {k : Nat → Nat} :
  (  Σ i : Fin n , Fin ( k i) ) ≃  Fin (∑ i : Fin n, k i) := by
     apply Equiv.trans
     apply sumIsSum
     exact finSumnFinEquiv
 
 
-
+-- other stuf TODO DELETE!
 def finSumnFinEquiv_cpy  {n : Nat} {k : Fin n → Nat} :
  (  Σ i : Fin n , Fin ( k i) ) ≃  Fin (∑ i : Fin n, k i) := by
   -- induction on lenght of k = k0, ..., k(n-1)
